@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace GreetingCards.Core.Models
 {
@@ -38,19 +37,28 @@ namespace GreetingCards.Core.Models
             var xMiddle = instanceImage.Width / 2;
             var yMiddle = instanceImage.Height / 2;
 
-            var senderLocation = new PointF(xMiddle, 30);
-            var messageLocation = new PointF(xMiddle, yMiddle);
-            var recipientLocation = new PointF(xMiddle, instanceImage.Height - 30);
-
             using (var graphics = Graphics.FromImage(instanceImage))
-            using (var arialFont = new Font("Arial", 10))
+            using (var font = new Font("Arial", 10))
             {
-                graphics.DrawString(recipient, arialFont, Brushes.Blue, recipientLocation);
-                graphics.DrawString(sender, arialFont, Brushes.Red, messageLocation);
-                graphics.DrawString(message, arialFont, Brushes.Green, senderLocation);
+                var recipientLocation = CalculateLocation(xMiddle, graphics.MeasureString(recipient, font), 30);
+                var messageLocation = CalculateLocation(xMiddle, graphics.MeasureString(message, font), yMiddle);
+                var senderLocation = CalculateLocation(xMiddle, graphics.MeasureString(sender, font), instanceImage.Height - 30);
+
+                graphics.DrawString(recipient, font, Brushes.Black, recipientLocation);
+                graphics.DrawString(message, font, Brushes.Black, messageLocation);
+                graphics.DrawString(sender, font, Brushes.Black, senderLocation);
             }
 
             return instanceImage;
+        }
+
+        private PointF CalculateLocation(int xMiddle, SizeF textSize, int yPosition)
+        {
+            var textMiddle = textSize.Width / 2;
+
+            var xPosition = xMiddle - textMiddle;
+
+            return new PointF(xPosition, yPosition);
         }
     }
 }
